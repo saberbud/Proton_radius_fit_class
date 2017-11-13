@@ -73,11 +73,17 @@ int main(Int_t argc, char *argv[])
   id_gen=3;  //Gaussian with float norm
   id_nois=2;  //Gaussian noise
 
-  int nfits=3;
+  int nfits=7;
   int id_fit[100];
   id_fit[0]=5;  //Gaussian with float norm
   id_fit[1]=1;  //Dipole with float norm
   id_fit[2]=3;  //Monopole with float norm
+  id_fit[3]=6;  //poly fit
+  id_fit[4]=6;  //poly fit
+  id_fit[5]=6;  //poly fit
+  id_fit[6]=6;  //poly fit
+
+  int npset;
 
   double fit_R[100],fit_Rerr[100],fit_chi2[100];
 
@@ -107,7 +113,12 @@ int main(Int_t argc, char *argv[])
 
     Rfc.GE_noise_gen(id_nois);
 
+    npset=0;
     for(int j=0;j<nfits;j++){
+      if(id_fit[j]==6){
+        npset=npset+1;
+        Rfc.set_npower(npset, 0, 1);
+      }
       Rfc.GE_fit(id_fit[j]);
       Rfc.get_fit_result(fit_result);
       fit_R[j]=fit_result[0];
