@@ -70,10 +70,10 @@ int main(Int_t argc, char *argv[])
 
 
   int id_gen,id_nois;
-  id_gen=3;  //Gaussian with float norm
+  id_gen=2;  //1: dipole, 2: monopole 3: Gaussian with float norm
   id_nois=2;  //Gaussian noise
 
-  int nfits=7;
+  int nfits=8;
   int id_fit[100];
   id_fit[0]=5;  //Gaussian with float norm
   id_fit[1]=1;  //Dipole with float norm
@@ -82,6 +82,7 @@ int main(Int_t argc, char *argv[])
   id_fit[4]=6;  //poly fit
   id_fit[5]=6;  //poly fit
   id_fit[6]=6;  //poly fit
+  id_fit[7]=7;  //DH ratio fit
 
   int npset;
 
