@@ -31,10 +31,13 @@ public:
     void txt_data_read(string A);
     void GE_model_gen(int id);
     void GE_noise_gen(int id);
+    void z_trans();
+    void GE_z_fit(int id);
     void GE_fit(int id);
 
     void set_npower(int np, int dnp, int fnorm);
     void set_para(double *parain, int npara);
+    void set_Tc(double Tcin);
     void show_data(int nshow);
     void get_fit_result(double *fres);
 
@@ -43,10 +46,12 @@ private:
     int npower;
     int dnpower;
     int f_norm;
+    double Tc;
     double Q2_txt[1000],Q2[1000];
     double GE_txt[1000],GE[1000];
     double dGE_txt[1000],dGE[1000];
     double zero[1000];
+    double z_arr[1000];
     double chi2fit,Rfit,Rfiterr;
     double param[100];
 

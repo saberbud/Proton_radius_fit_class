@@ -153,6 +153,74 @@ void R_fit_class::GE_noise_gen(int id)
   delete rdm;
 }
 
+void R_fit_class::z_trans()
+{
+  double num,den;
+  for(int i=0;i<ndata;i++){
+    num=sqrt(Tc+Q2[i])-sqrt(Tc);
+    den=sqrt(Tc+Q2[i])+sqrt(Tc);
+    z_arr[i]=num/den;
+  }
+}
+
+void R_fit_class::GE_z_fit(int id)
+{
+  cout << "GE_z_fit id= " << id << endl;
+
+  chi2fit=0.;Rfit=0.;Rfiterr=0.;
+
+  TGraphErrors *gr=new TGraphErrors(ndata,z_arr,GE,zero,dGE);
+
+  double R_c,R_1,R_2,R_E;
+  if(id==0){
+    cout << "Fit: multiple para poly, z power: " << npower << " , float norm: " << f_norm << endl;
+
+    TString f_express=Form("1. - [0]*[0]*x*%.4f*2./3.",Tc);
+    if(f_norm>0)f_express="("+f_express;
+    for(int p=1;p<npower;p++){
+      f_express=f_express+Form("+[%d]",p);
+      for(int k=0;k<=p;k++){
+        f_express=f_express+"*x";
+      }
+    }
+    if(f_norm>0)f_express=f_express+Form(")*[%d]",npower);
+    cout << f_express << endl;
+
+    TF1 *poly = new TF1("poly", f_express, 0, 0.5);
+    poly->SetParameter(0, 0.9);
+    gr->Fit("poly","0");
+    R_c=poly->GetParameter(0);
+    R_1=poly->GetParameter(0)+poly->GetParError(0);
+    R_2=poly->GetParameter(0)-poly->GetParError(0);
+    R_E=(R_1-R_2)/2.;
+    chi2fit=poly->GetChisquare();
+    Rfit=R_c;
+    Rfiterr=R_E;
+    cout << "R= " << Rfit << " | Error= " << Rfiterr << " | chi2= " << chi2fit << endl;
+
+    delete poly;
+  }else if(id==1){
+    cout << "Fit: poly z ratio 3 para R" << endl;
+    TString f_express=Form("[2]*(1.-[0]*[0]*x*%.4f*2./3.+[1]*x)/(1.+[1]*x)",Tc);
+    cout << f_express << endl;
+    TF1 *poly = new TF1("poly", f_express, 0, 0.5);
+    poly->SetParameter(0, 0.9);
+    gr->Fit("poly","0");
+    R_c=poly->GetParameter(0);
+    R_1=poly->GetParameter(0)-poly->GetParError(0);
+    R_2=poly->GetParameter(0)+poly->GetParError(0);
+    R_E=(R_2-R_1)/2.;
+    chi2fit=poly->GetChisquare();
+    Rfit=R_c;
+    Rfiterr=R_E;
+    cout << "R= " << Rfit << " | Error= " << Rfiterr << " | chi2= " << chi2fit << endl;
+
+    delete poly;
+  }
+
+  delete gr;
+}
+
 void R_fit_class::GE_fit(int id)
 {
   cout << "GE_fit id= " << id << endl;
@@ -308,6 +376,13 @@ void R_fit_class::set_npower(int np, int dnp, int fnorm)
   f_norm=fnorm;
 
   cout << "Set npower= " << npower << " , dnpower= " << dnpower << " , f_norm= " << f_norm << endl;
+}
+
+void R_fit_class::set_Tc(double Tcin)
+{
+  Tc=Tcin;
+
+  cout << "Set Tc= " << Tc << endl;
 }
 
 void R_fit_class::set_para(double *parain, int npara)
