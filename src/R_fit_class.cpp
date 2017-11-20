@@ -148,6 +148,15 @@ void R_fit_class::GE_noise_gen(int id)
 
       GE[i]=GE[i]+temp;
     }
+  }else if(id==5){
+    cout << "Add scaling noise, type 5" << endl;
+    a0=1.;
+    a1=param[0];
+    temp=rdm->Gaus(a0, a1);
+    cout << "Scaling: " << temp << endl;
+    for(int i=0;i<ndata;i++){
+      GE[i]=GE[i]*temp;
+    }
   }
 
   delete rdm;
@@ -350,6 +359,23 @@ void R_fit_class::GE_fit(int id)
   }else if(id==7){
     cout << "Fit: poly ratio 3 para R" << endl;
     TF1 *poly = new TF1("poly", "[2]*(1.-[0]*[0]*x/6.+[1]*x)/(1.+[1]*x)", 0, 0.5);
+    poly->SetParameter(0, 0.9);
+    gr->Fit("poly","0");
+    R_c=poly->GetParameter(0);
+    R_1=poly->GetParameter(0)-poly->GetParError(0);
+    R_2=poly->GetParameter(0)+poly->GetParError(0);
+    R_E=(R_2-R_1)/2.;
+    chi2fit=poly->GetChisquare();
+    Rfit=R_c;
+    Rfiterr=R_E;
+    cout << "R= " << Rfit << " | Error= " << Rfiterr << " | chi2= " << chi2fit << endl;
+
+    delete poly;
+  }else if(id==8){
+    cout << "Fit: poly Q4 with fixed Q6, Q8" << endl;
+    TString f_express=Form("[2]*(1.-[0]*[0]*x/6.+[1]*x*x-%.9f*x*x*x+%.9f*x*x*x*x)",param[0],param[1]);
+    cout << f_express << endl;
+    TF1 *poly = new TF1("poly", f_express, 0, 0.5);
     poly->SetParameter(0, 0.9);
     gr->Fit("poly","0");
     R_c=poly->GetParameter(0);
