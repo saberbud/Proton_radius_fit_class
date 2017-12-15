@@ -85,6 +85,75 @@ void R_fit_class::GE_model_gen(int id)
     }
 
     delete poly;
+  }else if(id==4){
+    cout << "Generate, Kelly: radius input= " << 0.863 << endl;
+    double A=1./(25.68*4.*0.938*0.938);
+    TF1 *poly = new TF1("poly", "((1.+[0]*x)/(1.+[1]*x+[2]*x*x+[3]*x*x*x))", 0, 10.5);
+    double p0=-0.24*A;
+    poly->SetParameter(0, p0);
+    p0=10.98*A;
+    poly->SetParameter(1, p0);
+    p0=12.82*A*A;
+    poly->SetParameter(2, p0);
+    p0=21.97*A*A*A;
+    poly->SetParameter(3, p0);
+    for(int i=0;i<ndata;i++){
+      Q2[i]=Q2_txt[i];
+      GE[i]=poly->Eval(Q2[i]);
+      dGE[i]=dGE_txt[i];
+    }
+
+    delete poly;
+  }else if(id==5){
+    cout << "Generate, Arrington: radius input= " << 0.8779 << endl;
+    double A=1./(25.68*4.*0.938*0.938);
+    TF1 *poly = new TF1("poly", "((1.+[0]*x+[1]*x*x+[2]*x*x*x)/(1.+[3]*x+[4]*x*x+[5]*x*x*x+[6]*x*x*x*x+[7]*x*x*x*x*x))", 0, 10.5);
+    double p0=2.90966*A;
+    poly->SetParameter(0, p0);
+    p0=-1.11542229*A*A;
+    poly->SetParameter(1, p0);
+    p0=3.866171e-2*A*A*A;
+    poly->SetParameter(2, p0);
+    p0=14.5187212*A;
+    poly->SetParameter(3, p0);
+    p0=40.88333*A*A;
+    poly->SetParameter(4, p0);
+    p0=99.999998*A*A*A;
+    poly->SetParameter(5, p0);
+    p0=4.579e-5*A*A*A*A;
+    poly->SetParameter(6, p0);
+    p0=10.3580447*A*A*A*A*A;
+    poly->SetParameter(7, p0);
+    for(int i=0;i<ndata;i++){
+      Q2[i]=Q2_txt[i];
+      GE[i]=poly->Eval(Q2[i]);
+      dGE[i]=dGE_txt[i];
+    }
+
+    delete poly;
+  }else if(id==6){
+    cout << "Generate, Arrington inverse poly: radius input= " << 0.8682 << endl;
+    double A=1./25.68;
+    TF1 *poly = new TF1("poly", "(1./(1.+[0]*x+[1]*x*x+[2]*x*x*x+[3]*x*x*x*x+[4]*x*x*x*x*x+[5]*x*x*x*x*x*x))", 0, 10.5);
+    double p0=3.226*A;
+    poly->SetParameter(0, p0);
+    p0=1.508*A*A;
+    poly->SetParameter(1, p0);
+    p0=-0.3773*A*A*A;
+    poly->SetParameter(2, p0);
+    p0=0.611*A*A*A*A;
+    poly->SetParameter(3, p0);
+    p0=-0.1853*A*A*A*A*A;
+    poly->SetParameter(4, p0);
+    p0=1.596e-2*A*A*A*A*A*A;
+    poly->SetParameter(5, p0);
+    for(int i=0;i<ndata;i++){
+      Q2[i]=Q2_txt[i];
+      GE[i]=poly->Eval(Q2[i]);
+      dGE[i]=dGE_txt[i];
+    }
+
+    delete poly;
   }
 
 
@@ -156,6 +225,17 @@ void R_fit_class::GE_noise_gen(int id)
     cout << "Scaling: " << temp << endl;
     for(int i=0;i<ndata;i++){
       GE[i]=GE[i]*temp;
+    }
+  }else if(id==6){
+    cout << "Add mannual shift, type 6" << endl;
+    a0=param[0];
+    a1=param[1];
+    for(int i=0;i<ndata;i++){
+      if(i<a0){
+        GE[i]=GE[i]+a1*dGE_txt[i];
+      }else{
+        GE[i]=GE[i]-a1*dGE_txt[i];
+      }
     }
   }
 
