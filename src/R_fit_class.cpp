@@ -499,6 +499,47 @@ void R_fit_class::GE_fit(int id)
     cout << "R= " << Rfit << " | Error= " << Rfiterr << " | chi2= " << chi2fit << endl;
 
     delete poly;
+  }else if(id==10){
+    cout << "Fit: poly ratio np=" << npower << " ,dnpower= " << dnpower << " , float norm: " << f_norm << endl;
+
+    int itemp;
+    TString fn_express="1.-[0]*[0]*x/6.+[1]*x";
+    for(int p=1;p<npower;p++){
+      itemp=p+1;
+      fn_express=fn_express+Form("+[%d]",itemp);
+      for(int k=0;k<=p;k++){
+        fn_express=fn_express+"*x";
+      }
+    }
+    // cout << fn_express << endl;
+
+    TString fd_express="1.+[1]*x";
+    for(int p=1;p<dnpower;p++){
+      itemp=p+npower;
+      fd_express=fd_express+Form("+[%d]",itemp);
+      for(int k=0;k<=p;k++){
+        fd_express=fd_express+"*x";
+      }
+    }
+    // cout << fd_express << endl;
+
+    TString f_express="("+fn_express+")/("+fd_express+")";
+    if(f_norm>0)f_express=Form("[%d]*",npower+dnpower)+f_express;
+    cout << f_express << endl;
+
+    TF1 *poly = new TF1("poly", f_express, 0, 0.5);
+    poly->SetParameter(0, 0.9);
+    gr->Fit("poly","0");
+    R_c=poly->GetParameter(0);
+    R_1=poly->GetParameter(0)-poly->GetParError(0);
+    R_2=poly->GetParameter(0)+poly->GetParError(0);
+    R_E=(R_2-R_1)/2.;
+    chi2fit=poly->GetChisquare();
+    Rfit=R_c;
+    Rfiterr=R_E;
+    cout << "R= " << Rfit << " | Error= " << Rfiterr << " | chi2= " << chi2fit << endl;
+
+    delete poly;
   }
 
 
