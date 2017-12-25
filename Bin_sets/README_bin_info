@@ -1,0 +1,7 @@
+In a bin_set_#.txt file
+1. The number in the 1st row is the total number of bins in this bin set.
+2. There are 3 numbers in each row from row 2 to the last row of the file, which are the value of Q^2 (fm^{-2}) of this bin, GE from a certain model in this bin, and dGE the uncertainty of GE in this bin.
+
+The values of Q^2, GE and dGE can be read into the program by R_fit_class::txt_data_read("file name").
+When a generator is used in the R_fit_class, the Q^2 and dGE values of each bin will not be changed, and GE value in each bin will be calculated based on the Q^2 values of the bin and the model chosen by the user.
+
