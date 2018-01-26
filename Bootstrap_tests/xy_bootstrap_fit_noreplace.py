@@ -60,6 +60,7 @@ slen=len(q2)  #full resampling
 slen=25  #choose for partial resampling
 assert(slen <= len(q2))
 np.random.seed(7)
+D={}
 
 for l in range(loop):
     if(np.mod(l,100) == 0):
@@ -69,6 +70,11 @@ for l in range(loop):
     np.random.shuffle(perm)
     idx=perm[0:slen]
     idx=np.sort(idx)
+
+    ts=str(idx)
+    if (ts in D): continue
+    D[ts]=1
+
     subq2=q2[idx]; subge=ge[idx]; subdge=dge[idx]
     if(np.mod(l,100) == 0):
         print("  sizes q2, ge, dge: " + str(subq2.size) + " , " + str(subge.size) + " , " + str(subdge.size))
