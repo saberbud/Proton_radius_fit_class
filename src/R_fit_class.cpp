@@ -31,6 +31,17 @@ void R_fit_class::txt_data_read(string A)
   infile.close();
 }
 
+void R_fit_class::txt_data_write(string A)
+{
+  ofstream outfile(A);
+  outfile << ndata << endl;
+  for(int i=0;i<ndata;i++){
+    outfile << Q2[i] << " " << GE[i] << " " << dGE[i] << endl;
+  }
+  outfile.close();
+
+}
+
 void R_fit_class::GE_model_gen(int id)
 {
   cout << "GE_model_gen id= " << id << endl;
@@ -154,6 +165,88 @@ void R_fit_class::GE_model_gen(int id)
     }
 
     delete poly;
+  }else if(id==7){
+    cout << "Generate, Arrington-Sick-2007: radius input= " << 0.8965 << endl;
+    TString f_express="1. + [0]*x";
+    int tnp=5;
+    for(int p=1;p<tnp;p++){
+      f_express=f_express+Form("/(1.+[%d]*x",p);
+    }
+
+    for(int p=1;p<tnp;p++){
+      f_express=f_express+")";
+    }
+
+    f_express="1./("+f_express+")";
+    cout << f_express << endl;
+
+    double A=1./25.68;
+    double p0;
+    TF1 *poly = new TF1("poly", f_express, 0, 10.5);
+    p0=3.440*A;
+    poly->SetParameter(0, p0);
+    p0=-0.178*A;
+    poly->SetParameter(1, p0);
+    p0=-1.212*A;
+    poly->SetParameter(2, p0);
+    p0=1.176*A;
+    poly->SetParameter(3, p0);
+    p0=-0.284*A;
+    poly->SetParameter(4, p0);
+
+    for(int i=0;i<ndata;i++){
+      Q2[i]=Q2_txt[i];
+      GE[i]=poly->Eval(Q2[i]);
+      dGE[i]=dGE_txt[i];
+    }
+
+    delete poly;
+  }else if(id==8){
+    // cout << "Generate, YZJA: radius input= " << 0.8792 << endl;
+    cout << "Generate, YZJA: radius input= " << 0.85 << endl;
+
+    double tz;
+    for(int i=0;i<ndata;i++){
+      Q2[i]=Q2_txt[i];
+      tz=z_calc(Q2[i], 2.00252188772, -17.99);
+      // GE[i]=0.239163298067 - 1.109858574410*tz + 1.444380813060*pow(tz,2) + 0.479569465603*pow(tz,3) - 2.286894741870*pow(tz,4) + 1.126632984980*pow(tz,5) + 1.250619843540*pow(tz,6) - 3.631020471590*pow(tz,7) + 4.082217023790*pow(tz,8) + 0.504097346499*pow(tz,9) - 5.085120460510*pow(tz,10) + 3.967742543950*pow(tz,11) - 0.981529071103*pow(tz,12);  //0.8792 fm
+      GE[i]=0.239448638275 - 1.11264843899*tz + 1.44819766508*pow(tz,2) + 0.514648365159*pow(tz,3) - 2.36672103495*pow(tz,4) + 0.926165750483*pow(tz,5) + 2.05049172945*pow(tz,6) - 4.11073019989*pow(tz,7) + 2.64932410946*pow(tz,8) + 3.51485719222*pow(tz,9) - 7.5760640139*pow(tz,10) + 4.96350589461*pow(tz,11) - 1.14047565701*pow(tz,12);  //0.85 fm
+      dGE[i]=dGE_txt[i];
+    }
+
+  }else if(id==9){
+    cout << "Generate, Bernauer: radius input= " << 0.8868 << endl;
+
+    double tz;
+    for(int i=0;i<ndata;i++){
+      Q2[i]=Q2_txt[i];
+      tz=Q2_txt[i]/25.68;
+      GE[i]=1. - 3.36591660*tz + 1.45487683e+01*pow(tz,2) - 8.87959239e+01*pow(tz,3) + 4.61097705e+02*pow(tz,4) - 1.67562381e+03*pow(tz,5) + 4.07646487e+03*pow(tz,6) - 6.45411460e+03*pow(tz,7) + 6.34035079e+03*pow(tz,8) - 3.49373923e+03*pow(tz,9) + 8.22601568e+02*pow(tz,10);  //0.8868 fm
+      dGE[i]=dGE_txt[i];
+    }
+
+  }else if(id==10){
+    cout << "Generate, YZJA: radius input= " << 0.8792 << endl;
+
+    double tz;
+    for(int i=0;i<ndata;i++){
+      Q2[i]=Q2_txt[i];
+      tz=z_calc(Q2[i], 2.00252188772, -17.99);
+      GE[i]=0.239163298067 - 1.109858574410*tz + 1.444380813060*pow(tz,2) + 0.479569465603*pow(tz,3) - 2.286894741870*pow(tz,4) + 1.126632984980*pow(tz,5) + 1.250619843540*pow(tz,6) - 3.631020471590*pow(tz,7) + 4.082217023790*pow(tz,8) + 0.504097346499*pow(tz,9) - 5.085120460510*pow(tz,10) + 3.967742543950*pow(tz,11) - 0.981529071103*pow(tz,12);  //0.8792 fm
+      dGE[i]=dGE_txt[i];
+    }
+
+  }else if(id==11){
+    cout << "Generate, Bernauer orig: radius input= " << 0.8872 << endl;
+
+    double tz;
+    for(int i=0;i<ndata;i++){
+      Q2[i]=Q2_txt[i];
+      tz=Q2_txt[i]/25.68;
+      GE[i]=1. - 3.3686*tz + 14.5606*pow(tz,2) - 88.1912*pow(tz,3) + 453.6244*pow(tz,4) - 1638.7911*pow(tz,5) + 3980.7174*pow(tz,6) - 6312.6333*pow(tz,7) + 6222.3646*pow(tz,8) - 3443.2251*pow(tz,9) + 814.4112*pow(tz,10);  //0.8868 fm
+      dGE[i]=dGE_txt[i];
+    }
+
   }
 
 
@@ -250,6 +343,16 @@ void R_fit_class::z_trans()
     den=sqrt(Tc+Q2[i])+sqrt(Tc);
     z_arr[i]=num/den;
   }
+}
+
+double R_fit_class::z_calc(double Q2_in, double Tc_in, double T0_in)
+{
+  double res=0.;
+  double num=sqrt(Tc_in+Q2_in)-sqrt(Tc_in-T0_in);
+  double den=sqrt(Tc_in+Q2_in)+sqrt(Tc_in-T0_in);
+  res=num/den;
+
+  return res;
 }
 
 void R_fit_class::GE_z_fit(int id)

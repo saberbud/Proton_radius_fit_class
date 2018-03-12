@@ -29,9 +29,11 @@ public:
     R_fit_class();
 
     void txt_data_read(string A);
+    void txt_data_write(string A);
     void GE_model_gen(int id);
     void GE_noise_gen(int id);
     void z_trans();
+    double z_calc(double Q2_in, double Tc_in, double T0_in);
     void GE_z_fit(int id);
     void GE_fit(int id);
 
